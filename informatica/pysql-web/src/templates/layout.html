@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pypage</title>
+    <!-- BOOTSTRAP 4-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    
+</head>
+<body>
+    <!-- Navbar Bootstrap -->
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="/">PySQL</a>
+        </li>
+        <li class="nav-item ml-auto">
+          <a class="nav-link" href="/load">Load</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/view">View</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/consult">Consult&Update</a>
+        </li>
+      </ul>
+
+      {% block content %}
+      {% endblock %}
+</body>
+</html>
