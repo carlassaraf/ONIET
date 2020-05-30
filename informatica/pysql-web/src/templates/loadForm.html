@@ -2,7 +2,7 @@
 
 {% block content %}
 <!-- Form para juntar datos, el button llama a update -->
-<div class="container p-3 my-3 border" style="width:70%; float:left; margin-left:2.5%;">
+<div class="container p-3 my-3 border" style="width:45%; height:450px; float:left; margin-left:2.5%;">
   <form method="POST">
     <h1 class="display-4">Formulario</h1>
     <hr class="my-3">
@@ -41,7 +41,9 @@
       </div>
       <input type="text" class="form-control" name="mat">
     </div>
-    <button class="btn btn-primary" type="submit">Cargar registro</button>
+    <button class="btn btn-primary" type="submit" style="background-color:dimgray; border-style: none;">
+      Cargar registro
+    </button>
 
     {% if feedback %}
     <p class="text-danger float-right">{{ feedback }}</p>
@@ -49,16 +51,225 @@
   </form>
 </div>
 
-<div class="container my-3 p-3 border" style="width:20%; float:right; margin-right:2.5%;">
+<!-- Container con botones para crear y borrar tabla -->
+
+<div class="container p-3 border" style="width:45%; height: 200px; float:right; margin-right:2.5%; margin-top: 1.75%;">
   <p>
     Tengan Xampp corriendo con MySQL Workbench conectado a una database 'alumnosdb'.</p>
-  <form action="./create" method="POST">
-    <button class="btn btn-primary" type="submit" style="margin-bottom: 1px;">Crear tabla</button>
-  </form>
-  <form action="./drop" method="POST">
-    <button class="btn btn-primary" type="submit" style="margin-top: 1px;">Borrar tabla</button>
-  </form>
+  <div>
+    <form action="/create" id="create_form"></form>
+    <form action="/drop" id="drop_form"></form>  
+    <button class="btn btn-secondary" form="create_form" name="create">Crear tabla</button>
+    <button class="btn btn-secondary" form="drop_form" name="drop">Borrar tabla</button>  
+  </div>
+  <hr class="my-2">
   <p>Respeten el formato de los datos del formulario.</p>
+</div>
+
+<!-- Container para hacer consultas -->
+
+<div class="container p-3 border" style="width:45%; height: 250px; float: right; margin-right: 2.5%;">
+  <h1 class="display-4">Consultas</h1>
+  <hr class="my-4">
+  
+  <div class="dropdown">
+    <form method="POST" action="/consult-type">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      Campo de consulta
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <button name="mat" class="dropdown-item">Matricula</button>
+      <button name="fname" class="dropdown-item">Nombre</button>
+      <button name="lname" class="dropdown-item">Apellido</button>
+      <button name="divi" class="dropdown-item">Curso</button>
+      <button name="nac" class="dropdown-item">Nacimiento</button>
+    </div>
+    </form>
+  </div>
+
+  <hr class="my-2">
+
+  <form method="POST" action="/consult-init">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          {% if consult %}
+          <span class="input-group-text">{{ consult[0] }}</span>
+          {% else %}
+          <span class="input-group-text">Elija un campo</span>
+          {% endif %}
+        </div>
+        {% if consult %}
+        <input type="text" class="form-control" name={{ consult[1] }}>
+        {% else %}
+        <input type="text" class="form-control">
+        {% endif %}
+        <button type="submit" class="btn btn-primary" style="background-color:lightslategray; border-style: none;">
+          <svg class="bi bi-search" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+            <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+          </svg>
+        </button> 
+      </div>        
+  </form>
+
+<!-- Muestreo de la tabla completa -->
+<div class="container p-3 my-4" style="position: absolute; left: 2.5%;">
+
+  <table class="table table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Matricula</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Apellido</th>
+          <th scope="col">Nacimiento</th>
+          <th scope="col">Curso</th>
+          <th scope="col">
+            <a href="/load" style="color: white;">
+              <svg class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z"/>
+                <path fill-rule="evenodd" d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z"/>
+              </svg>
+            </a>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if table %}
+        {% for i in table %}
+        <tr>
+          <td>{{ i[0] }}</td>
+          <td>{{ i[1] }}</td>
+          <td>{{ i[2] }}</td>
+          <td>{{ i[4] }}</td>
+          <td>{{ i[3] }}</td>
+          <td>
+            <button data-toggle="modal" data-target="#confirm-delete-{{i[0]}}" style="border-style:none; background-color: white; align-self: center;">
+                <svg class="bi bi-trash" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>  
+                </svg>
+            </button>
+            </td>
+            <td>
+            <button data-toggle="modal" data-target="#update-{{i[0]}}" style="border-style:none; background-color: white; align-self: center;">
+              <svg class="bi bi-pencil" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>
+                <path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>
+              </svg>
+            </button>  
+            </td>
+        </tr>
+
+            <!-- Modal para delete-->
+            <div class="modal fade" id="confirm-delete-{{i[0]}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Eliminar registro</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+      
+                  <div class="modal-body">
+                    ¿Seguro que desea eliminar el registro?
+                  </div>
+      
+                  <div class="modal-footer">
+                    <form method="POST" action="/delete">
+                    <input type="hidden" style="color: black;" name="mat" value={{i[0]}}></input>
+                    <button type="submit" class="btn btn-primary">
+                      <svg class="bi bi-check-square" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                        <path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
+                      </svg>
+                      Si
+                    </button>
+      
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                      <svg class="bi bi-x-square" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                        <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z"/>
+                        <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z"/>
+                      </svg>
+                      No
+                    </button>   
+      
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+  <!-- Modal para update-->
+  <div class="modal fade" id=update-{{i[0]}} tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modificar registro</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Escriba los campos que quiera cambiar.
+          <hr class="mb-4">
+          <form method="POST" action="/update">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Matricula</span>
+            </div>
+            <input type="text" class="form-control" name="mat">
+          </div>           
+            
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Nombre</span>
+            </div>
+            <input type="text" class="form-control" name="fname">
+          </div>           
+      
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Apellido</span>
+            </div>
+            <input type="text" class="form-control" name="lname">
+          </div>       
+      
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Curso</span>
+            </div>
+            <input type="text" class="form-control" name="divi" placeholder="722">
+          </div>       
+      
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Nacimiento</span>
+            </div>
+            <input type="text" class="form-control" name="nac" placeholder="YYYY-MM-DD"> 
+          </div>
+          
+          <input type="hidden" style="color: black;" name="where" value={{i[0]}}></input>
+          <button type="submit" class="btn btn-primary">
+            <svg class="bi bi-check-square" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+              <path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
+            </svg>
+            Modificar
+          </button>
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>  
+
 </div>
 
 {% endblock %}
